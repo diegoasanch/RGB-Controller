@@ -18,7 +18,7 @@ class Screen : public ProtoThread {
         Adafruit_SSD1306 display;
 
     public:
-        Screen(unsigned long refreshRateHz)
+        Screen(float refreshRateHz)
         : display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET)
         {
             this->setRefreshRate(refreshRateHz);
@@ -28,13 +28,14 @@ class Screen : public ProtoThread {
             display.setTextColor(WHITE);
         }
 
-        void updateReadings(float temperature, float humidity) {
+        void updateReadings(float temperature, float humidity, int brightness) {
             display.clearDisplay();
             display.setCursor(0, 0);
             display.print("Temperature: " + String(temperature) + " C");
             display.setCursor(0, 10);
             display.print("Humidity: " + String(humidity) + " %");
             display.setCursor(0, 20);
+            display.print("Brightness: " + String(brightness));
             display.display();
         }
 

@@ -11,7 +11,7 @@ class Weather : public ProtoThread {
         DHT sensor;
 
     public:
-        Weather(unsigned long refreshRateHz, uint8_t dataPin) : sensor(dataPin, DHT22) {
+        Weather(float refreshRateHz, uint8_t dataPin) : sensor(dataPin, DHT22) {
             this->dataPin = dataPin;
             this->setRefreshRate(refreshRateHz);
             sensor.begin();
