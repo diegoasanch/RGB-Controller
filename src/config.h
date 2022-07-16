@@ -15,8 +15,8 @@ namespace pins {
 
     const uint8_t WEATHER_DATA = D3;
 
-    // const uint8_t RED;
-    // const uint8_t GREEN;
-    // const uint8_t BLUE;
+    const uint8_t RGB_RED = D7;
+    const uint8_t RGB_GREEN = D6;
+    const uint8_t RGB_BLUE = D5;
 
 }

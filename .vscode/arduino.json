@@ -1,7 +1,7 @@
 {
     "sketch": "src/src.ino",
-    "port": "/dev/cu.usbserial-14330",
-    "board": "esp8266:esp8266:d1_mini_clone",
-    "configuration": "xtal=80,vt=flash,exception=disabled,stacksmash=disabled,ssl=all,mmu=3232,non32xfer=fast,FlashMode=dout,FlashFreq=40,eesz=4M2M,ip=lm2f,dbg=Disabled,lvl=None____,wipe=none,baud=921600",
+    "port": "/dev/cu.usbserial-14340",
+    "board": "esp8266:esp8266:d1_mini",
+    "configuration": "xtal=80,vt=flash,exception=disabled,stacksmash=disabled,ssl=all,mmu=3232,non32xfer=fast,eesz=4M,ip=lm2f,dbg=Serial,lvl=None____,wipe=all,baud=921600",
     "output": "../.arduino_output"
 }
