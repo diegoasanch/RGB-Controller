@@ -6,7 +6,7 @@ namespace refreshRate {
     */
     const float SCREEN = 0.2;
     const float WEATHER = 0.1;
-    const unsigned short LED = 60;
+    const unsigned short LED = 150;
 }
 
 namespace pins {

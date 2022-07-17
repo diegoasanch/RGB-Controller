@@ -1,3 +1,5 @@
+#include <Regexp.h>
+
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
@@ -12,35 +14,33 @@
 #include "WiFi.hpp"
 
 Weather weatherSensor(refreshRate::WEATHER, pins::WEATHER_DATA);
+RGBLed rgb(
+    pins::RGB_RED,
+    pins::RGB_GREEN,
+    pins::RGB_BLUE,
+    true,
+    70,
+    RGB_WHITE,
+    refreshRate::LED
+);
 
-RGBLed rgb(pins::RGB_RED, pins::RGB_GREEN, pins::RGB_BLUE, true, refreshRate::LED);
-Api api(80, &rgb);
-
-float temperature = 0;
-float humidity = 0;
+Api api(80, &rgb, &weatherSensor);
 
 void setup() {
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
+    // TODO: activate Serial with env
     Serial.begin(9600);
-    startup();
+    Serial.println("Booting up...");
+
     setupWifi();
     api.configure();
-}
 
+    if (Serial) Serial.println("Setup complete " + String(millis()) + "ms");
+    digitalWrite(LED_BUILTIN, HIGH);
+}
 
 void loop() {
     rgb.update();
     api.handleRequests();
-
-    if (weatherSensor.shouldUpdate()) {
-        temperature = weatherSensor.getTemperature();
-        humidity = weatherSensor.getHumidity();
-    }
-}
-
-void startup() {
-    Serial.println("Booting up...");
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(200);
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(200);
 }
