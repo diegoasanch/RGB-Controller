@@ -69,4 +69,13 @@ public:
     unsigned long activeTime() {
         return map(brightness, 0, MAX_BRIGHTNESS, 0, millisBetweenRefresh);
     }
+
+    void setRefreshRateHz(unsigned long refreshRateHz) {
+        this->refreshRateHz = refreshRateHz;
+        this->millisBetweenRefresh = 1000 * 1000 / refreshRateHz; // us
+    }
+
+    unsigned long getRefreshRateHz() {
+        return this->refreshRateHz;
+    }
 };

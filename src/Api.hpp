@@ -3,9 +3,13 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <uri/UriRegex.h>
+#include <ArduinoJson.h>
+
+
 
 #include "Weather.hpp"
 #include "RGBLed.hpp"
+#include "config.h"
 
 class Api {
 public:
@@ -46,6 +50,7 @@ private:
         server.on("/", [this]() {this->handleRoot();});
         // Light
         // -- Toggle
+        server.on("/light", [this]() {this->handleLightStatus();});
         server.on("/light/on", [this]() {this->turnOn();});
         server.on("/light/off", [this]() {this->turnOff();});
         server.on("/light/toggle", [this]() {this->toggle();});
@@ -55,6 +60,9 @@ private:
         // -- Color
         server.on("/light/hexColor", [this]() {this->getHexColor();});
         server.on(UriRegex("^\\/light\\/hexColor\\/([0-9a-fA-F]{6})$"), [this]() {this->setHexColor();});
+        // -- Refresh rate
+        server.on("/light/refreshRateHz", [this]() {this->getRefreshRate();});
+        server.on(UriRegex("^\\/light\\/refreshRateHz\\/([0-9]+)$"), [this]() {this->setRefreshRate();});
 
         // Weather
         server.on("/weather/temperature", [this]() {this->getTemperature();});
@@ -64,11 +72,14 @@ private:
         server.on("/stats", [this]() {this->stats();});
     }
 
-    // -------- Light --------
     void handleRoot() {
         server.send(200, "text/plain", "Hello friend.");
     }
 
+    // -------- Light --------
+    void handleLightStatus() {
+        server.send(200, "text/plain", this->rgb->getIsOn() ? "1" : "0");
+    }
     void getBrightness() {
         String brightness = String(this->rgb->getBrightness());
         server.send(200, "text/plain", brightness);
@@ -110,12 +121,20 @@ private:
     // -------- Weather --------
     void getTemperature() {
         float temperature = this->weather->getTemperature();
-        server.send(200, "text/plain", String(temperature).c_str());
+        String json = "";
+        StaticJsonDocument<200> parser;
+        parser["temperature"] = temperature;
+        serializeJson(parser, json);
+        server.send(200, "text/plain", json);
     }
 
     void getHumidity() {
         float humidity = this->weather->getHumidity();
-        server.send(200, "text/plain", String(humidity).c_str());
+        String json = "";
+        StaticJsonDocument<200> parser;
+        parser["humidity"] = humidity;
+        serializeJson(parser, json);
+        server.send(200, "text/plain", json);
     }
 
     // -------- Middleware --------
@@ -123,7 +142,7 @@ private:
         server.send(404, "text/plain", "Not found");
     }
 
-    // TODO: add development status from ENV
+    // TODO: add development status based ENV
     void stats() {
         server.send(200, "text/json", "{ \"status\": \"OK\", \"uptime\": \"" + String(millis()) + "\" }");
     }
@@ -136,10 +155,21 @@ private:
             (void)client;       // the webserver tcp client connection
             // (void)contentType;  // contentType(".html") => "text/html"
             if (Serial) {
-                Serial.printf(">[%s] %s - from IP: %s \n", method.c_str(), url.c_str(), client->remoteIP().toString().c_str());
-                Serial.println(" time stamp: " + String(millis()));
+                Serial.printf("\n>[%s] %s - from IP: %s \n", method.c_str(), url.c_str(), client->remoteIP().toString().c_str());
+                Serial.println("-time stamp: " + String(millis()));
             }
             return ESP8266WebServer::CLIENT_REQUEST_CAN_CONTINUE;
             });
+    }
+
+    void setRefreshRate() {
+        String refreshRate = server.pathArg(0);
+        this->rgb->setRefreshRateHz(refreshRate.toInt());
+        server.send(200, "text/plain", String(this->rgb->getRefreshRateHz()));
+    }
+
+    void getRefreshRate() {
+        String refreshRate = String(this->rgb->getRefreshRateHz());
+        server.send(200, "text/plain", refreshRate);
     }
 };

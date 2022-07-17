@@ -72,6 +72,10 @@ public:
         this->updateLeds();
     }
 
+    bool getIsOn() {
+        return this->isOn;
+    }
+
     void turnOn() {
         isOn = true;
         this->updateLedDisplayValues();
@@ -89,6 +93,7 @@ public:
     }
 
     uint8 setBrightness(uint8 brightness) {
+        Serial.printf("> SetBrightness %d\n", brightness);;
         this->brightness = constrain(brightness, 0, MAX_RGB_BRIGHTNESS);
         this->updateLedDisplayValues();
         return this->brightness;
@@ -109,6 +114,7 @@ public:
      * @param color In format `RRGGBB` (hex)
      */
     void setHexColor(String color) {
+        Serial.printf("> SetHexColor %s\n", color.c_str());;
         String red = color.substring(0, 2);
         String green = color.substring(2, 4);
         String blue = color.substring(4, 6);
@@ -139,5 +145,15 @@ public:
         }
 
         return red + green + blue;
+    }
+
+    void setRefreshRateHz(unsigned long refreshRateHz) {
+        this->red.setRefreshRateHz(refreshRateHz);
+        this->green.setRefreshRateHz(refreshRateHz);
+        this->blue.setRefreshRateHz(refreshRateHz);
+    }
+
+    unsigned long getRefreshRateHz() {
+        return this->red.getRefreshRateHz();
     }
 };
