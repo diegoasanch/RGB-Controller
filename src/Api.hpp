@@ -13,7 +13,7 @@
 
 class Api {
 public:
-    Api(int port, RGBLed* rgb, Weather* weather) : server(port) {
+    Api(int port, RGBLed& rgb, Weather& weather) : server(port), rgb(rgb), weather(weather) {
         this->port = port;
         this->rgb = rgb;
         this->weather = weather;
@@ -43,8 +43,8 @@ public:
 private:
     ESP8266WebServer server;
     int port;
-    RGBLed* rgb;
-    Weather* weather;
+    RGBLed& rgb;
+    Weather& weather;
 
     void configureRoutes() {
         server.on("/", [this]() {this->handleRoot();});
@@ -78,49 +78,49 @@ private:
 
     // -------- Light --------
     void handleLightStatus() {
-        server.send(200, "text/plain", this->rgb->getIsOn() ? "1" : "0");
+        server.send(200, "text/plain", this->rgb.getIsOn() ? "1" : "0");
     }
     void getBrightness() {
-        String brightness = String(this->rgb->getBrightness());
+        String brightness = String(this->rgb.getBrightness());
         server.send(200, "text/plain", brightness);
     }
 
     void setBrightness() {
         String brightness = server.pathArg(0);
-        this->rgb->setBrightness((uint8)brightness.toInt());
+        this->rgb.setBrightness((uint8)brightness.toInt());
         server.send(200, "text/plain", "Brightness set to " + brightness);
     }
 
     void setHexColor() {
         String hexColor = server.pathArg(0);
-        this->rgb->setHexColor(hexColor);
+        this->rgb.setHexColor(hexColor);
         server.send(200, "text/plain", hexColor);
     }
 
     void getHexColor() {
-        String color = this->rgb->getHexColor();
+        String color = this->rgb.getHexColor();
         server.send(200, "text/plain", color);
     }
 
     // TODO: Give "light-x" naming
     void turnOn() {
-        this->rgb->turnOn();
+        this->rgb.turnOn();
         server.send(200, "text/plain", "1");
     }
 
     void turnOff() {
-        this->rgb->turnOff();
+        this->rgb.turnOff();
         server.send(200, "text/plain", "0");
     }
 
     void toggle() {
-        bool status = this->rgb->toggle();
+        bool status = this->rgb.toggle();
         server.send(200, "text/plain", status ? "1" : "0");
     }
 
     // -------- Weather --------
     void getTemperature() {
-        float temperature = this->weather->getTemperature();
+        float temperature = this->weather.getTemperature();
         String json = "";
         StaticJsonDocument<200> parser;
         parser["temperature"] = temperature;
@@ -129,7 +129,7 @@ private:
     }
 
     void getHumidity() {
-        float humidity = this->weather->getHumidity();
+        float humidity = this->weather.getHumidity();
         String json = "";
         StaticJsonDocument<200> parser;
         parser["humidity"] = humidity;
@@ -164,12 +164,12 @@ private:
 
     void setRefreshRate() {
         String refreshRate = server.pathArg(0);
-        this->rgb->setRefreshRateHz(refreshRate.toInt());
-        server.send(200, "text/plain", String(this->rgb->getRefreshRateHz()));
+        this->rgb.setRefreshRateHz(refreshRate.toInt());
+        server.send(200, "text/plain", String(this->rgb.getRefreshRateHz()));
     }
 
     void getRefreshRate() {
-        String refreshRate = String(this->rgb->getRefreshRateHz());
+        String refreshRate = String(this->rgb.getRefreshRateHz());
         server.send(200, "text/plain", refreshRate);
     }
 };

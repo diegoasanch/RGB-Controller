@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Led.hpp"
+#include "config.h"
 
 const uint8 MAX_RGB_BRIGHTNESS = 100;
 
@@ -22,22 +23,17 @@ private:
     Led green;
     Led blue;
 
+    bool isOn;
     RGB_Color color;
     uint8 brightness;
-    bool isOn;
+    unsigned long refreshRateHz;
 
     void updateLedDisplayValues() {
         red.setBrightness(this->getDisplayValue(color.red));
         green.setBrightness(this->getDisplayValue(color.green));
         blue.setBrightness(this->getDisplayValue(color.blue));
 
-        this->updateLeds();
-    }
-
-    void updateLeds() {
-        this->red.updateLed();
-        this->green.updateLed();
-        this->blue.updateLed();
+        this->run();
     }
 
     uint8 getDisplayValue(uint8 color) {
@@ -55,21 +51,30 @@ public:
         RGB_Color color,
         unsigned long refreshRateHz
     ) :
-        red(redPin, refreshRateHz),
-        green(greenPin, refreshRateHz),
-        blue(bluePin, refreshRateHz)
+        red(redPin),
+        green(greenPin),
+        blue(bluePin)
     {
-
         this->color = color;
         this->brightness = brightness;
         this->isOn = isOn;
+        this->refreshRateHz = refreshRateHz;
+
+        analogWriteFreq(refreshRate::LED);
+        analogWriteRange(MAX_LED_BRIGHTNESS);
 
         this->updateLedDisplayValues();
     }
 
+    void run() {
+        this->red.run();
+        this->green.run();
+        this->blue.run();
+    }
+
     void update() {
         if (!isOn) return;
-        this->updateLeds();
+        this->run();
     }
 
     bool getIsOn() {
@@ -148,12 +153,11 @@ public:
     }
 
     void setRefreshRateHz(unsigned long refreshRateHz) {
-        this->red.setRefreshRateHz(refreshRateHz);
-        this->green.setRefreshRateHz(refreshRateHz);
-        this->blue.setRefreshRateHz(refreshRateHz);
+        this->refreshRateHz = constrain(refreshRateHz, 0, 40000);
+        analogWriteFreq(refreshRate::LED);
     }
 
     unsigned long getRefreshRateHz() {
-        return this->red.getRefreshRateHz();
+        return this->refreshRateHz;
     }
 };
