@@ -3,6 +3,7 @@
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
+#include <AsyncTimer.h>
 
 #include "env.h"
 #include "config.h"
@@ -12,8 +13,10 @@
 #include "RGBLed.hpp"
 #include "Api.hpp"
 #include "WiFi.hpp"
+#include "Animation.hpp"
 
-Weather weatherSensor(refreshRate::WEATHER, pins::WEATHER_DATA);
+AsyncTimer timer;
+// Animation animation(timer);
 RGBLed rgb(
     pins::RGB_RED,
     pins::RGB_GREEN,
@@ -21,8 +24,11 @@ RGBLed rgb(
     true,
     70,
     RGB_WHITE,
-    refreshRate::LED
+    refreshRate::LED,
+    timer
 );
+
+Weather weatherSensor(refreshRate::WEATHER, pins::WEATHER_DATA);
 
 Api api(80, rgb, weatherSensor);
 
@@ -43,4 +49,5 @@ void setup() {
 
 void loop() {
     api.handleRequests();
+    timer.handle();
 }

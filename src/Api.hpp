@@ -15,8 +15,6 @@ class Api {
 public:
     Api(int port, RGBLed& rgb, Weather& weather) : server(port), rgb(rgb), weather(weather) {
         this->port = port;
-        this->rgb = rgb;
-        this->weather = weather;
     }
 
     void configure() {
@@ -54,6 +52,9 @@ private:
         server.on("/light/on", [this]() {this->turnOn();});
         server.on("/light/off", [this]() {this->turnOff();});
         server.on("/light/toggle", [this]() {this->toggle();});
+        server.on("/light/onAnimated", [this]() {this->turnOnAnimated();});
+        server.on("/light/offAnimated", [this]() {this->turnOffAnimated();});
+        server.on("/light/toggleAnimated", [this]() {this->toggleAnimated();});
         // -- Brightness
         server.on("/light/brightness", [this]() {this->getBrightness();});
         server.on(UriRegex("^\\/light\\/brightness\\/([0-9]+)$"), [this]() {this->setBrightness();});
@@ -115,6 +116,20 @@ private:
 
     void toggle() {
         bool status = this->rgb.toggle();
+        server.send(200, "text/plain", status ? "1" : "0");
+    }
+    void turnOnAnimated() {
+        this->rgb.turnOnAnimated();
+        server.send(200, "text/plain", "1");
+    }
+
+    void turnOffAnimated() {
+        this->rgb.turnOffAnimated();
+        server.send(200, "text/plain", "0");
+    }
+
+    void toggleAnimated() {
+        bool status = this->rgb.toggleAnimated();
         server.send(200, "text/plain", status ? "1" : "0");
     }
 

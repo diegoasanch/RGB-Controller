@@ -1,7 +1,10 @@
 #pragma once
 
+#include <AsyncTimer.h>
 #include "Led.hpp"
 #include "config.h"
+// #include "Animation.hpp"
+
 
 const uint8 MAX_RGB_BRIGHTNESS = 100;
 
@@ -27,6 +30,17 @@ private:
     RGB_Color color;
     uint8 brightness;
     unsigned long refreshRateHz;
+    // Animation& animation;
+
+    // TODO: Move to Animation class
+    AsyncTimer& timer;
+    int from;
+    int to;
+    int current;
+    unsigned short timerId;
+    int step;
+    // End TODO
+
 
     void updateLedDisplayValues() {
         red.setBrightness(this->getDisplayValue(color.red));
@@ -49,11 +63,15 @@ public:
         bool isOn,
         uint8 brightness,
         RGB_Color color,
-        unsigned long refreshRateHz
+        unsigned long refreshRateHz,
+        AsyncTimer& timer
+        // Animation& animation
     ) :
         red(redPin),
         green(greenPin),
-        blue(bluePin)
+        blue(bluePin),
+        timer(timer)
+        // animation(animation)
     {
         this->color = color;
         this->brightness = brightness;
@@ -64,6 +82,8 @@ public:
         analogWriteRange(MAX_LED_BRIGHTNESS);
 
         this->updateLedDisplayValues();
+        this->timerId = 0;
+        this->step = 1;
     }
 
     void run() {
@@ -95,6 +115,23 @@ public:
         isOn = !isOn;
         this->updateLedDisplayValues();
         return isOn;
+    }
+
+
+    void turnOnAnimated() {
+        this->turnOn();
+        this->transition(0, 70); // Make it use the off brightness
+    }
+
+    void turnOffAnimated() {
+        this->transition(this->brightness, 0);
+    }
+    bool toggleAnimated() {
+        if (isOn)
+            this->turnOffAnimated();
+        else
+            this->turnOnAnimated();
+        return !isOn;
     }
 
     uint8 setBrightness(uint8 brightness) {
@@ -160,4 +197,54 @@ public:
     unsigned long getRefreshRateHz() {
         return this->refreshRateHz;
     }
+
+    bool shoudlTurnOn() {
+        return brightness > 0 && !isOn;
+    }
+
+    bool shoudlTurnOff() {
+        return brightness == 0 && isOn;
+    }
+
+    // TODO: make its own class
+    // TODO: receive onChange and cleanup callbacks
+    void transition(int from, int to) {
+        // void transition(int from, int to, unsigned long timeMs, ChangeHandler onChangePtr, Cleanup onCleanupPtr) {
+        int direction = from > to ? -1 : 1;
+        int timeMs = 200;
+        int fps = 100;
+        int updateTimes = fps * timeMs / 1000;
+        this->step = abs(from - to) / updateTimes * direction;
+        this->from = from;
+        this->to = to;
+        this->current = from;
+        // this->timeMs = timeMs; // TODO: use timeMs
+        // this->onChangePtr = onChangePtr;
+        // this->onCleanupPtr = onCleanupPtr;
+
+        if (this->timerId != 0) {
+            this->timer.cancel(this->timerId);
+        }
+
+        this->timerId = this->timer.setInterval([this]() {
+            this->current += this->step;
+            this->setBrightness(this->current);
+
+            // Stop the timer
+            if (
+                (this->step > 0 && this->current >= this->to)
+                || (this->step < 0 && this->current <= this->to)
+                ) {
+                this->timer.cancel(this->timerId);
+
+                if (this->shoudlTurnOn()) {
+                    this->turnOn();
+                }
+                else if (this->shoudlTurnOff()) {
+                    this->turnOff();
+                }
+            }
+            }, 1000 / fps);
+    }
 };
+
