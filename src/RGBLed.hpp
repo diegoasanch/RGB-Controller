@@ -141,7 +141,7 @@ public:
         return this->brightness;
     }
 
-    uint16 getBrightness() {
+    uint8 getBrightness() {
         return this->brightness;
     }
 

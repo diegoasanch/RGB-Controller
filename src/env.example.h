@@ -2,5 +2,5 @@
 
 namespace env {
     const char* WIFI_SSID = "WiFi SSID (2.4 GHz only)";
-    const char* WIFI_PASSWORD = "WiFi Password";
+    const char* WIFI_PASSWORD = "WiFiPassword";
 }

@@ -29,12 +29,13 @@ RGBLed rgb(
 );
 
 Weather weatherSensor(refreshRate::WEATHER, pins::WEATHER_DATA);
-
 Api api(80, rgb, weatherSensor);
 
 void setup() {
+    // Turn led ON until setup is completed
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
+
     // TODO: activate Serial with env
     Serial.begin(115200);
     Serial.println("Booting up...");
@@ -44,6 +45,7 @@ void setup() {
 
     if (Serial) Serial.println("Setup complete " + String(millis()) + "ms");
     digitalWrite(LED_BUILTIN, HIGH);
+
     rgb.run();
 }
 
