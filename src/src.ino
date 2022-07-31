@@ -1,19 +1,13 @@
-#include <Regexp.h>
-
-#include <ESP8266WiFi.h>
-#include <WiFiClient.h>
-#include <ESP8266WebServer.h>
 #include <AsyncTimer.h>
 
 #include "env.h"
 #include "config.h"
-#include "Screen.hpp"
-#include "Weather.hpp"
-#include "Led.hpp"
-#include "RGBLed.hpp"
+
+// #include "Animation.hpp"
 #include "Api.hpp"
+#include "RGBLed.hpp"
+#include "Weather.hpp"
 #include "WiFi.hpp"
-#include "Animation.hpp"
 
 AsyncTimer timer;
 // Animation animation(timer);

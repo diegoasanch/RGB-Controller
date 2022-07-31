@@ -3,8 +3,6 @@
 #include <DHT.h>
 #include <DHT_U.h>
 
-#include "ProtoThread.hpp"
-
 class Weather {
 private:
     uint8_t dataPin;
