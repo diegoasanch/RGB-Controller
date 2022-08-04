@@ -15,9 +15,15 @@ struct RGB_Color {
 };
 
 const RGB_Color RGB_WHITE = {
-    MAX_RGB_BRIGHTNESS,
-    MAX_RGB_BRIGHTNESS,
-    MAX_RGB_BRIGHTNESS
+    MAX_LED_BRIGHTNESS,
+    MAX_LED_BRIGHTNESS,
+    MAX_LED_BRIGHTNESS
+};
+
+const RGB_Color RGB_BLUE = {
+    0,
+    0,
+    MAX_LED_BRIGHTNESS
 };
 
 class RGBLed {

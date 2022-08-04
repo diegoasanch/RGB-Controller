@@ -20,3 +20,7 @@ namespace pins {
     const uint8_t RGB_GREEN = D7;
 
 }
+
+namespace device {
+    const String VERSION = "1.0.1";
+}

@@ -3,17 +3,23 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <uri/UriRegex.h>
+#include <uri/UriBraces.h>
 #include <ArduinoJson.h>
 
-
-
-#include "Weather.hpp"
-#include "RGBLed.hpp"
 #include "config.h"
+
+#include "RGBLed.hpp"
+#include "Update.hpp"
+#include "Weather.hpp"
 
 class Api {
 public:
-    Api(int port, RGBLed& rgb, Weather& weather) : server(port), rgb(rgb), weather(weather) {
+    Api(int port, RGBLed& rgb, Weather& weather, UpdateClient& updateClient) :
+        server(port),
+        rgb(rgb),
+        weather(weather),
+        updateClient(updateClient)
+    {
         this->port = port;
     }
 
@@ -43,6 +49,7 @@ private:
     int port;
     RGBLed& rgb;
     Weather& weather;
+    UpdateClient& updateClient;
 
     void configureRoutes() {
         server.on("/", [this]() {this->handleRoot();});
@@ -68,6 +75,10 @@ private:
         // Weather
         server.on("/weather/temperature", [this]() {this->getTemperature();});
         server.on("/weather/humidity", [this]() {this->getHumidity();});
+
+        // Update
+        server.on(UriBraces("/update/version/{}"), [this]() {this->handleUpdateVersion();});
+        server.on("/update/current", [this]() {this->getVersion();});
 
         // Utils
         server.on("/stats", [this]() {this->stats();});
@@ -150,6 +161,19 @@ private:
         parser["humidity"] = humidity;
         serializeJson(parser, json);
         server.send(200, "text/plain", json);
+    }
+
+    // -------- Update --------
+
+    void handleUpdateVersion() {
+        String version = server.pathArg(0);
+        server.send(200, "text/plain", "starting update");
+        this->updateClient.install(version);
+    }
+
+    void getVersion() {
+        String version = this->updateClient.version();
+        server.send(200, "text/plain", version);
     }
 
     // -------- Middleware --------
