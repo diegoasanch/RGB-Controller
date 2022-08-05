@@ -55,4 +55,9 @@ public:
         EEPROM.write(addresses::rgbBlue, blue);
         EEPROM.commit();
     }
+
+    void reboot() {
+        EEPROM.end();
+        ESP.restart();
+    }
 };

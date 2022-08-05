@@ -28,7 +28,7 @@ RGBLed rgb(
 );
 
 Weather weatherSensor(refreshRate::WEATHER, pins::WEATHER_DATA);
-Api api(80, rgb, weatherSensor, updateClient);
+Api api(80, rgb, weatherSensor, updateClient, settings);
 
 void setup() {
     // Turn led ON until setup is completed

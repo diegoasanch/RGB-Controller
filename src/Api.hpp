@@ -9,16 +9,18 @@
 #include "config.h"
 
 #include "RGBLed.hpp"
+#include "Settings.hpp"
 #include "Update.hpp"
 #include "Weather.hpp"
 
 class Api {
 public:
-    Api(int port, RGBLed& rgb, Weather& weather, UpdateClient& updateClient) :
+    Api(int port, RGBLed& rgb, Weather& weather, UpdateClient& updateClient, Settings& settings) :
         server(port),
         rgb(rgb),
         weather(weather),
-        updateClient(updateClient)
+        updateClient(updateClient),
+        settings(settings)
     {
         this->port = port;
     }
@@ -50,6 +52,7 @@ private:
     RGBLed& rgb;
     Weather& weather;
     UpdateClient& updateClient;
+    Settings& settings;
 
     void configureRoutes() {
         server.on("/", [this]() {this->handleRoot();});
@@ -76,9 +79,11 @@ private:
         server.on("/weather/temperature", [this]() {this->getTemperature();});
         server.on("/weather/humidity", [this]() {this->getHumidity();});
 
+        // -- Settings
         // Update
-        server.on(UriBraces("/update/version/{}"), [this]() {this->handleUpdateVersion();});
-        server.on("/update/current", [this]() {this->getVersion();});
+        server.on(UriBraces("/settings/version/update/{}"), [this]() {this->handleUpdateVersion();});
+        server.on("/settings/version", [this]() {this->getVersion();});
+        server.on("/settings/reboot", [this]() {this->handleReboot();});
 
         // Utils
         server.on("/stats", [this]() {this->stats();});
@@ -163,7 +168,7 @@ private:
         server.send(200, "text/plain", json);
     }
 
-    // -------- Update --------
+    // -------- Settings --------
 
     void handleUpdateVersion() {
         String version = server.pathArg(0);
@@ -174,6 +179,11 @@ private:
     void getVersion() {
         String version = this->updateClient.version();
         server.send(200, "text/plain", version);
+    }
+
+    void handleReboot() {
+        server.send(200, "text/plain", "rebooting");
+        this->settings.reboot();
     }
 
     // -------- Middleware --------
