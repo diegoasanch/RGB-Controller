@@ -7,7 +7,7 @@ BOARD = 'esp8266:esp8266:d1_mini_clone'
 
 CWD = os.getcwd()
 BUILD_DIR = os.path.join(CWD, 'dist')
-VERSION_DIR = os.path.join(BUILD_DIR, 'version')
+OUT_DIR = os.path.join(BUILD_DIR, 'version')
 SKETCH_PATH = os.path.join(CWD, 'src','src.ino')
 BIN_FILE = 'src.ino.bin'
 
@@ -18,23 +18,24 @@ def compile_sketch(board: str, build_dir: str, sketch_path: str):
 
     print('Compiling...')
     with subprocess.Popen(COMPILE_CMD, stdout=subprocess.PIPE, shell=True) as proc:
+        output = proc.stdout.read()
         print('> Compilation done, result:\n')
-        print(proc.stdout.read().decode("utf-8"))
+        print(output.decode("utf-8"))
         return proc.returncode == 0
 
 def rename_build(new_name: str):
-    if not os.path.exists(VERSION_DIR):
-        os.makedirs(VERSION_DIR)
+    if not os.path.exists(OUT_DIR):
+        os.makedirs(OUT_DIR)
     os.rename(
         os.path.join(BUILD_DIR, BIN_FILE),
-        os.path.join(VERSION_DIR, new_name + '.bin')
+        os.path.join(OUT_DIR, new_name + '.bin')
     )
 
 def is_version_valid(name: str) -> bool:
     return bool(re.match(version_regex, name))
 
 def version_exists(name: str) -> bool:
-    return os.path.exists(os.path.join(VERSION_DIR, name + '.bin'))
+    return os.path.exists(os.path.join(OUT_DIR, name + '.bin'))
 
 def yes_or_no(question: str) -> bool:
     while True:
