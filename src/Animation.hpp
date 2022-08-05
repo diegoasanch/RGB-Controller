@@ -1,13 +1,9 @@
 #pragma once
 
 #include <AsyncTimer.h>
-// #include"RGBLed.hpp"
 
-// typedef void(*AnimationHandler)(int);
 typedef std::function<void(int)> AnimationHandler;
 typedef std::function<void()> AnimationCompleteHandler;
-// using AnimationHandler = float (RGBLed::*)();
-// typedef void (*Cleanup)(void);
 
 class Animation {
 private:
@@ -18,11 +14,9 @@ private:
     unsigned short timerId;
     int timeMs;
     int step;
+    int delayMs;
     AnimationHandler onChange;
     AnimationCompleteHandler onComplete;
-    // Cleanup onCleanupPtr;
-
-    // RGBLed rgb;
 
 public:
     Animation(AsyncTimer& timer) : timer(timer) {
@@ -34,6 +28,7 @@ public:
         this->onChange = nullptr;
         this->onComplete = nullptr;
         this->step = 0;
+        this->delayMs = 10;
     }
 
     void transition(uint8 from, uint8 to, AnimationHandler onChange, AnimationCompleteHandler onComplete) {
@@ -44,7 +39,8 @@ public:
         this->onChange = onChange;
         this->onComplete = onComplete;
 
-        this->step = from > to ? -3 : 3;
+        int stepSize = abs(to - from) / (timeMs / delayMs);
+        this->step = from > to ? -stepSize : stepSize;
         // this->timeMs = timeMs; // TODO: use timeMs
 
         this->timerId = this->timer.setInterval([this]() {
@@ -65,7 +61,7 @@ public:
                     this->onComplete();
                 }
             }
-            }, 3);
+            }, delayMs);
     }
 
 };
