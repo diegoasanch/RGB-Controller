@@ -42,16 +42,6 @@ private:
     Settings& settings;
     Animation& animation;
 
-    // TODO: Move to Animation class
-    AsyncTimer& timer;
-    int from;
-    int to;
-    int current;
-    unsigned short timerId;
-    int step;
-    // End TODO
-
-
     void updateLedDisplayValues() {
         red.setBrightness(this->getDisplayValue(color.red));
         green.setBrightness(this->getDisplayValue(color.green));
@@ -70,14 +60,12 @@ public:
         uint8_t redPin,
         uint8_t greenPin,
         uint8_t bluePin,
-        AsyncTimer& timer,
         Settings& settings,
         Animation& animation
     ) :
         red(redPin),
         green(greenPin),
         blue(bluePin),
-        timer(timer),
         settings(settings),
         animation(animation)
     {
@@ -91,8 +79,6 @@ public:
         analogWriteRange(MAX_LED_BRIGHTNESS);
 
         this->updateLedDisplayValues();
-        this->timerId = 0;
-        this->step = 1;
     }
 
     void startFromStorage() {
@@ -255,46 +241,5 @@ public:
     unsigned long getRefreshRateHz() {
         return this->refreshRateHz;
     }
-
-    // // TODO: make its own class
-    // // TODO: receive onChange and cleanup callbacks
-    // void transition(int from, int to) {
-    //     // void transition(int from, int to, unsigned long timeMs, ChangeHandler onChangePtr, Cleanup onCleanupPtr) {
-    //     int direction = from > to ? -1 : 1;
-    //     int timeMs = 200;
-    //     int fps = 100;
-    //     int updateTimes = fps * timeMs / 1000;
-    //     this->step = abs(from - to) / updateTimes * direction;
-    //     this->from = from;
-    //     this->to = to;
-    //     this->current = from;
-    //     // this->timeMs = timeMs; // TODO: use timeMs
-    //     // this->onChangePtr = onChangePtr;
-    //     // this->onCleanupPtr = onCleanupPtr;
-
-    //     if (this->timerId != 0) {
-    //         this->timer.cancel(this->timerId);
-    //     }
-
-    //     this->timerId = this->timer.setInterval([this]() {
-    //         this->current += this->step;
-    //         this->setBrightness(this->current);
-
-    //         // Stop the timer
-    //         if (
-    //             (this->step > 0 && this->current >= this->to)
-    //             || (this->step < 0 && this->current <= this->to)
-    //             ) {
-    //             this->timer.cancel(this->timerId);
-
-    //             if (this->shoudlTurnOn()) {
-    //                 this->turnOn();
-    //             }
-    //             else if (this->shoudlTurnOff()) {
-    //                 this->turnOff();
-    //             }
-    //         }
-    //         }, 1000 / fps);
-    // }
 };
 

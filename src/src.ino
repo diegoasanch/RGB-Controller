@@ -23,7 +23,6 @@ RGBLed rgb(
     pins::RGB_RED,
     pins::RGB_GREEN,
     pins::RGB_BLUE,
-    timer,
     settings,
     animation
 );
