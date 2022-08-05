@@ -99,7 +99,7 @@ private:
 
     void setBrightness() {
         String brightness = server.pathArg(0);
-        this->rgb.setBrightness((uint8)brightness.toInt());
+        this->rgb.setTargetBrightness((uint8)brightness.toInt());
         server.send(200, "text/plain", "Brightness set to " + brightness);
     }
 
