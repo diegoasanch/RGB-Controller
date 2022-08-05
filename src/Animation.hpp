@@ -40,6 +40,7 @@ public:
         this->onComplete = onComplete;
 
         int stepSize = abs(to - from) / (timeMs / delayMs);
+        stepSize = max(stepSize, 1);
         this->step = from > to ? -stepSize : stepSize;
         // this->timeMs = timeMs; // TODO: use timeMs
 
