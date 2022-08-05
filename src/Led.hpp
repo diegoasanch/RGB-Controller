@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 
-
 const uint8 MAX_LED_BRIGHTNESS = 255;
 
 class Led {
@@ -30,12 +29,10 @@ public:
     }
 
     void run() {
-        if (shouldTurnOn()) {
+        if (shouldTurnOn())
             turnOn();
-        }
-        else if (shouldTurnOff()) {
+        else if (shouldTurnOff())
             turnOff();
-        }
     }
 
     void turnOn() {

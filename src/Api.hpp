@@ -15,13 +15,18 @@
 
 class Api {
 public:
-    Api(int port, RGBLed& rgb, Weather& weather, UpdateClient& updateClient, Settings& settings) :
+    Api(int port,
+        RGBLed& rgb,
+        Weather& weather,
+        UpdateClient& updateClient,
+        Settings& settings
+    ) :
         server(port),
         rgb(rgb),
         weather(weather),
         updateClient(updateClient),
-        settings(settings)
-    {
+        settings(settings) {
+
         this->port = port;
     }
 

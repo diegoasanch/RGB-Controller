@@ -68,8 +68,7 @@ public:
         green(greenPin),
         blue(bluePin),
         settings(settings),
-        animation(animation)
-    {
+        animation(animation) {
         this->color = RGB_WHITE;
         this->displayBrightness = 70;
         this->targetBrightness = 70;
