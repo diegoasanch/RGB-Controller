@@ -3,7 +3,8 @@
 #include <AsyncTimer.h>
 #include "Led.hpp"
 #include "config.h"
-// #include "Animation.hpp"
+#include "Settings.hpp"
+#include "Animation.hpp"
 
 
 const uint8 MAX_RGB_BRIGHTNESS = 100;
@@ -36,7 +37,8 @@ private:
     RGB_Color color;
     uint8 brightness;
     unsigned long refreshRateHz;
-    // Animation& animation;
+    Settings& settings;
+    Animation& animation;
 
     // TODO: Move to Animation class
     AsyncTimer& timer;
@@ -66,23 +68,21 @@ public:
         uint8_t redPin,
         uint8_t greenPin,
         uint8_t bluePin,
-        bool isOn,
-        uint8 brightness,
-        RGB_Color color,
-        unsigned long refreshRateHz,
-        AsyncTimer& timer
-        // Animation& animation
+        AsyncTimer& timer,
+        Settings& settings,
+        Animation& animation
     ) :
         red(redPin),
         green(greenPin),
         blue(bluePin),
-        timer(timer)
-        // animation(animation)
+        timer(timer),
+        settings(settings),
+        animation(animation)
     {
-        this->color = color;
-        this->brightness = brightness;
-        this->isOn = isOn;
-        this->refreshRateHz = refreshRateHz;
+        this->color = RGB_WHITE;
+        this->brightness = 70;
+        this->isOn = false;
+        this->refreshRateHz = refreshRate::LED;
 
         analogWriteFreq(refreshRate::LED);
         analogWriteRange(MAX_LED_BRIGHTNESS);
@@ -90,6 +90,17 @@ public:
         this->updateLedDisplayValues();
         this->timerId = 0;
         this->step = 1;
+    }
+
+    void startFromStorage() {
+        this->isOn = this->settings.getRgbOn();
+        this->brightness = this->settings.getRgbBrightness();
+        uint8_t r = this->settings.getRgbRed();
+        uint8_t g = this->settings.getRgbGreen();
+        uint8_t b = this->settings.getRgbBlue();
+        this->color = { r, g, b };
+
+        this->updateLedDisplayValues();
     }
 
     void run() {
@@ -110,28 +121,46 @@ public:
     void turnOn() {
         isOn = true;
         this->updateLedDisplayValues();
+        this->settings.setRgbOn(true);
     }
 
     void turnOff() {
         isOn = false;
         this->updateLedDisplayValues();
+        this->settings.setRgbOn(false);
     }
 
     bool toggle() {
         isOn = !isOn;
         this->updateLedDisplayValues();
+        this->settings.setRgbOn(isOn);
         return isOn;
     }
 
 
     void turnOnAnimated() {
-        this->turnOn();
-        this->transition(0, 70); // Make it use the off brightness
+        isOn = true;
+        this->animation.transition(0, this->brightness, [this](uint8 value) {
+            this->setBrightness(value);
+            }, [this]() {
+                this->turnOn();
+            });
     }
+    // void turnOnAnimated() {
+    //     this->turnOn();
+    //     this->transition(0, 70); // Make it use the off brightness
+    // }
 
     void turnOffAnimated() {
-        this->transition(this->brightness, 0);
+        this->animation.transition(this->brightness, 0, [this](uint8 value) {
+            this->setBrightness(value);
+            }, [this]() {
+                this->turnOff();
+            });
     }
+    // void turnOffAnimated() {
+    //     this->transition(this->brightness, 0);
+    // }
     bool toggleAnimated() {
         if (isOn)
             this->turnOffAnimated();
@@ -141,9 +170,10 @@ public:
     }
 
     uint8 setBrightness(uint8 brightness) {
-        Serial.printf("> SetBrightness %d\n", brightness);;
+        // Serial.printf("> SetBrightness %d\n", brightness);;
         this->brightness = constrain(brightness, 0, MAX_RGB_BRIGHTNESS);
         this->updateLedDisplayValues();
+        // this->settings.setRgbBrightness(brightness);
         return this->brightness;
     }
 
@@ -154,6 +184,9 @@ public:
     void setRGBColor(uint8 red, uint8 green, uint8 blue) {
         color = RGB_Color{ red, green, blue };
         this->updateLedDisplayValues();
+        this->settings.setRgbRed(red);
+        this->settings.setRgbGreen(green);
+        this->settings.setRgbBlue(blue);
     }
 
     /**

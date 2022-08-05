@@ -1,21 +1,25 @@
 #pragma once
 
 #include <AsyncTimer.h>
-#include"RGBLed.hpp"
+// #include"RGBLed.hpp"
 
-// typedef void (*AnimationHandler)(int);
+// typedef void(*AnimationHandler)(int);
+typedef std::function<void(int)> AnimationHandler;
+typedef std::function<void()> AnimationCompleteHandler;
 // using AnimationHandler = float (RGBLed::*)();
 // typedef void (*Cleanup)(void);
 
 class Animation {
 private:
     AsyncTimer& timer;
-    int from;
-    int to;
-    int current;
+    uint8 from;
+    uint8 to;
+    uint8 current;
     unsigned short timerId;
-    // int timeMs;
-    // AnimationHandler onChangePtr;
+    int timeMs;
+    int step;
+    AnimationHandler onChange;
+    AnimationCompleteHandler onComplete;
     // Cleanup onCleanupPtr;
 
     // RGBLed rgb;
@@ -26,34 +30,42 @@ public:
         this->to = 0;
         this->current = 0;
         this->timerId = 0;
-        // this->timeMs = 0;
-        // this->onChangePtr = nullptr;
-        // this->onCleanupPtr = nullptr;
+        this->timeMs = 200;
+        this->onChange = nullptr;
+        this->onComplete = nullptr;
+        this->step = 0;
     }
 
-    // TODO: receive onChange and cleanup callbacks
-    void transition(int from, int to, RGBLed* rgb) {
-        // void transition(int from, int to, unsigned long timeMs, ChangeHandler onChangePtr, Cleanup onCleanupPtr) {
+    void transition(uint8 from, uint8 to, AnimationHandler onChange, AnimationCompleteHandler onComplete) {
+        this->current = from;
         this->from = from;
         this->to = to;
+
+        this->onChange = onChange;
+        this->onComplete = onComplete;
+
+        this->step = from > to ? -3 : 3;
         // this->timeMs = timeMs; // TODO: use timeMs
-        // this->onChangePtr = onChangePtr;
-        // this->onCleanupPtr = onCleanupPtr;
 
-        timerId = timer.setInterval([&]() {
-            current++;
-            (*rgb).setBrightness(current);
-            // if (this->onChangePtr != nullptr) {
-            //     // (this->rgb.*onChangePtr)();
-            //     this->onChangePtr(this->current);
-            // }
+        this->timerId = this->timer.setInterval([this]() {
+            this->current = constrain(
+                this->current + this->step,
+                min(this->from, this->to),
+                max(this->from, this->to)
+            );
 
-            // Stop the timer
-            if (current > to) {
-                timer.cancel(timerId);
-                (*rgb).update();
+            if (this->onChange != nullptr) {
+                this->onChange(this->current);
             }
-            }, 100);
+            // Stop the timer
+            if ((this->step > 0 && this->current >= this->to) ||
+                (this->step < 0 && this->current <= this->to)) {
+                this->timer.cancel(this->timerId);
+                if (this->onComplete != nullptr) {
+                    this->onComplete();
+                }
+            }
+            }, 3);
     }
 
 };

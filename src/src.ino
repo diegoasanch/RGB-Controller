@@ -4,28 +4,28 @@
 #include "env.h"
 #include "config.h"
 
-// #include "Animation.hpp"
+#include "Animation.hpp"
 #include "Api.hpp"
 #include "RGBLed.hpp"
 #include "Update.hpp"
 #include "Weather.hpp"
 #include "WiFi.hpp"
+#include "Settings.hpp"
+
+Settings settings;
 
 WiFiClient client;
 UpdateClient updateClient(client);
 
 AsyncTimer timer;
-// Animation animation(timer);
+Animation animation(timer);
 RGBLed rgb(
     pins::RGB_RED,
     pins::RGB_GREEN,
     pins::RGB_BLUE,
-    true,
-    70,
-    RGB_BLUE,
-    // RGB_WHITE,
-    refreshRate::LED,
-    timer
+    timer,
+    settings,
+    animation
 );
 
 Weather weatherSensor(refreshRate::WEATHER, pins::WEATHER_DATA);
@@ -46,6 +46,7 @@ void setup() {
     if (Serial) Serial.println("Setup complete " + String(millis()) + "ms");
     digitalWrite(LED_BUILTIN, HIGH);
 
+    rgb.startFromStorage();
     rgb.run();
 }
 
