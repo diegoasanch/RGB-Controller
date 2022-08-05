@@ -22,5 +22,5 @@ namespace pins {
 }
 
 namespace device {
-    const String VERSION = "1.0.1";
+    const String VERSION = "1.1.0";
 }
