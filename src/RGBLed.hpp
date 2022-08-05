@@ -41,6 +41,7 @@ private:
     unsigned long refreshRateHz;
     Settings& settings;
     Animation& animation;
+    bool isAnimating;
 
     void updateLedDisplayValues() {
         red.setBrightness(this->getDisplayValue(color.red));
@@ -74,6 +75,7 @@ public:
         this->targetBrightness = 70;
         this->isOn = false;
         this->refreshRateHz = refreshRate::LED;
+        this->isAnimating = false;
 
         analogWriteFreq(refreshRate::LED);
         analogWriteRange(MAX_LED_BRIGHTNESS);
@@ -110,12 +112,17 @@ public:
     }
 
     void turnOn() {
+        if (isAnimating)
+            return;
         isOn = true;
+        this->setDisplayBrightness(this->targetBrightness);
         this->updateLedDisplayValues();
         this->settings.setRgbOn(true);
     }
 
     void turnOff() {
+        if (isAnimating)
+            return;
         isOn = false;
         this->updateLedDisplayValues();
         this->settings.setRgbOn(false);
@@ -130,21 +137,27 @@ public:
 
 
     void turnOnAnimated() {
+        if (isAnimating)
+            return;
         isOn = true;
-        this->animation.transition(0, this->displayBrightness, [this](uint8 value) {
+        this->isAnimating = true;
+        this->animation.transition(this->displayBrightness, this->targetBrightness, [this](uint8 value) {
             this->setDisplayBrightness(value);
             }, [this]() {
+                this->isAnimating = false;
                 this->turnOn();
             });
     }
 
     void turnOffAnimated() {
+        if (isAnimating)
+            return;
+        this->isAnimating = true;
         this->animation.transition(this->displayBrightness, 0, [this](uint8 value) {
             this->setDisplayBrightness(value);
             }, [this]() {
+                this->isAnimating = false;
                 this->turnOff();
-                // Return the brightness to the original value
-                this->setDisplayBrightness(this->targetBrightness);
             });
     }
 
@@ -163,11 +176,14 @@ public:
      * @return uint8
      */
     uint8 setTargetBrightness(uint8 brightness) {
+        if (isAnimating) {
+            return this->targetBrightness;
+        }
         this->displayBrightness = constrain(brightness, 0, MAX_RGB_BRIGHTNESS);
         this->targetBrightness = this->displayBrightness;
         this->updateLedDisplayValues();
         this->settings.setRgbBrightness(brightness);
-        return this->displayBrightness;
+        return this->targetBrightness;
     }
 
     /**
@@ -180,6 +196,20 @@ public:
         this->displayBrightness = constrain(brightness, 0, MAX_RGB_BRIGHTNESS);
         this->updateLedDisplayValues();
         return this->displayBrightness;
+    }
+
+    uint8 setBrightnessAnimated(uint8 brightness) {
+        if (isAnimating)
+            return this->targetBrightness;
+        this->isAnimating = true;
+
+        this->animation.transition(this->displayBrightness, brightness, [this](uint8 value) {
+            this->setDisplayBrightness(value);
+            }, [this, brightness]() {
+                this->isAnimating = false;
+                this->setTargetBrightness(brightness);
+            });
+        return this->targetBrightness;
     }
 
     uint8 getBrightness() {

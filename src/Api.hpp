@@ -68,6 +68,7 @@ private:
         // -- Brightness
         server.on("/light/brightness", [this]() {this->getBrightness();});
         server.on(UriRegex("^\\/light\\/brightness\\/([0-9]+)$"), [this]() {this->setBrightness();});
+        server.on(UriRegex("^\\/light\\/brightnessAnimated\\/([0-9]+)$"), [this]() {this->setBrightnessAnimated();});
         // -- Color
         server.on("/light/hexColor", [this]() {this->getHexColor();});
         server.on(UriRegex("^\\/light\\/hexColor\\/([0-9a-fA-F]{6})$"), [this]() {this->setHexColor();});
@@ -105,7 +106,13 @@ private:
     void setBrightness() {
         String brightness = server.pathArg(0);
         this->rgb.setTargetBrightness((uint8)brightness.toInt());
-        server.send(200, "text/plain", "Brightness set to " + brightness);
+        server.send(200, "text/plain", brightness);
+    }
+
+    void setBrightnessAnimated() {
+        String brightness = server.pathArg(0);
+        this->rgb.setBrightnessAnimated((uint8)brightness.toInt());
+        server.send(200, "text/plain", brightness);
     }
 
     void setHexColor() {
