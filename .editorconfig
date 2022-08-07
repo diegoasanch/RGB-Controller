@@ -1,10 +1,10 @@
-[*.{ino,cpp,hpp,py}]
+[*.{ino,cpp,h,hpp,py}]
 insert_final_newline = true
 indent_style = space
 indent_size = 4
 
 cpp_indent_braces = false
-cpp_new_line_before_open_brace_namespace = same_line
+cpp_new_line_before_open_brace_namespace = false
 cpp_new_line_before_open_brace_class = same_line
 cpp_new_line_before_open_brace_function = same_line
 cpp_new_line_before_open_brace_block = same_line

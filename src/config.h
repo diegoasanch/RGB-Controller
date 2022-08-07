@@ -18,9 +18,8 @@ namespace pins {
     const uint8_t RGB_BLUE = D5;
     const uint8_t RGB_RED = D6;
     const uint8_t RGB_GREEN = D7;
-
 }
 
 namespace device {
-    const String VERSION = "1.1.0";
+    const String VERSION = "v1.2.0-rc";
 }
