@@ -35,6 +35,9 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
 
+    rgb.startFromStorage();
+    rgb.run();
+
     // TODO: activate Serial with env
     Serial.begin(115200);
     Serial.println("Booting up...");
@@ -42,11 +45,9 @@ void setup() {
     setupWifi();
     api.configure();
 
-    if (Serial) Serial.println("Setup complete " + String(millis()) + "ms");
+    // Setup complete, LED off
+    Serial.println("Setup complete " + String(millis()) + "ms");
     digitalWrite(LED_BUILTIN, HIGH);
-
-    rgb.startFromStorage();
-    rgb.run();
 }
 
 void loop() {
