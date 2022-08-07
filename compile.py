@@ -21,14 +21,14 @@ def compile_sketch(board: str, build_dir: str, sketch_path: str):
         output = proc.stdout.read()
         print('> Compilation done, result:\n')
         print(output.decode("utf-8"))
-        return proc.returncode == 0
+        return proc.returncode
 
 def rename_build(new_name: str):
     if not os.path.exists(OUT_DIR):
         os.makedirs(OUT_DIR)
     os.rename(
         os.path.join(BUILD_DIR, BIN_FILE),
-        os.path.join(OUT_DIR, new_name + '.bin')
+        os.path.join(OUT_DIR, new_name+'.bin')
     )
 
 def is_version_valid(name: str) -> bool:
@@ -39,7 +39,7 @@ def version_exists(name: str) -> bool:
 
 def yes_or_no(question: str) -> bool:
     while True:
-        answer = input(question + ' (y/n): ')
+        answer = input(question + ' (y/n): ').lower()
         if answer == 'y':
             return True
         elif answer == 'n':
@@ -58,7 +58,6 @@ def main():
             print(f'Invalid version name {version}')
             print('Name must be a valid semantic versioning string')
             sys.exit(1)
-
         will_rename = True
 
         if version_exists(version):

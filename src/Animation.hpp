@@ -32,6 +32,11 @@ public:
     }
 
     void transition(uint8 from, uint8 to, AnimationHandler onChange, AnimationCompleteHandler onComplete) {
+        // Clear previous transition if exists
+        if (timerId) {
+            timer.cancel(timerId);
+            timerId = 0;
+        }
         this->current = from;
         this->from = from;
         this->to = to;
@@ -40,29 +45,40 @@ public:
         this->onComplete = onComplete;
 
         int stepSize = abs(to - from) / (timeMs / delayMs);
+        // If stepSize is 0, set it to 1 to prevent infinite loop in timer.
         stepSize = max(stepSize, 1);
         this->step = from > to ? -stepSize : stepSize;
         // this->timeMs = timeMs; // TODO: use timeMs
 
-        this->timerId = this->timer.setInterval([this]() {
+        this->timerId = this->timer.setInterval([&]() {
             this->current = constrain(
-                this->current + this->step,
-                min(this->from, this->to),
-                max(this->from, this->to)
+                current + step,
+                min(from, to),
+                max(from, to)
             );
 
-            if (this->onChange != nullptr) {
-                this->onChange(this->current);
-            }
+            if (this->onChange != nullptr)
+                this->onChange(current);
+
             // Stop the timer
-            if ((this->step > 0 && this->current >= this->to) ||
-                (this->step < 0 && this->current <= this->to)) {
+            if (this->shoudStopTimer()) {
                 this->timer.cancel(this->timerId);
-                if (this->onComplete != nullptr) {
-                    this->onComplete();
-                }
+                this->transitionCleanup();
             }
             }, delayMs);
+    }
+
+    bool shoudStopTimer() {
+        return (this->step > 0 && this->current >= this->to) ||
+            (this->step < 0 && this->current <= this->to);
+    }
+
+    void transitionCleanup() {
+        if (this->onComplete != nullptr)
+            this->onComplete();
+        this->timerId = 0;
+        this->onChange = nullptr;
+        this->onComplete = nullptr;
     }
 
 };

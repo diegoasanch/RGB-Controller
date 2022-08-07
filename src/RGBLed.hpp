@@ -140,9 +140,9 @@ public:
             return;
         isOn = true;
         this->isAnimating = true;
-        this->animation.transition(this->displayBrightness, this->targetBrightness, [this](uint8 value) {
+        this->animation.transition(this->displayBrightness, this->targetBrightness, [&](uint8 value) {
             this->setDisplayBrightness(value);
-            }, [this]() {
+            }, [&]() {
                 this->isAnimating = false;
                 this->turnOn();
             });
@@ -152,9 +152,9 @@ public:
         if (isAnimating)
             return;
         this->isAnimating = true;
-        this->animation.transition(this->displayBrightness, 0, [this](uint8 value) {
+        this->animation.transition(this->displayBrightness, 0, [&](uint8 value) {
             this->setDisplayBrightness(value);
-            }, [this]() {
+            }, [&]() {
                 this->isAnimating = false;
                 this->turnOff();
             });
@@ -198,13 +198,10 @@ public:
     }
 
     uint8 setBrightnessAnimated(uint8 brightness) {
-        if (isAnimating)
-            return this->targetBrightness;
         this->isAnimating = true;
-
-        this->animation.transition(this->displayBrightness, brightness, [this](uint8 value) {
+        this->animation.transition(this->displayBrightness, brightness, [&](uint8 value) {
             this->setDisplayBrightness(value);
-            }, [this, brightness]() {
+            }, [&, brightness]() {
                 this->isAnimating = false;
                 this->setTargetBrightness(brightness);
             });
