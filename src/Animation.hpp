@@ -33,9 +33,9 @@ public:
 
     void transition(uint8 from, uint8 to, AnimationHandler onChange, AnimationCompleteHandler onComplete) {
         // Clear previous transition if exists
-        if (timerId) {
-            timer.cancel(timerId);
-            timerId = 0;
+        if (this->timerId) {
+            this->timer.cancel(this->timerId);
+            this->timerId = 0;
         }
         this->current = from;
         this->from = from;
@@ -52,14 +52,14 @@ public:
 
         this->timerId = this->timer.setInterval([&]() {
             this->current = constrain(
-                current + step,
-                min(from, to),
-                max(from, to)
+                this->current + this->step,
+                min(this->from, this->to),
+                max(this->from, this->to)
             );
 
-            if (this->onChange != nullptr)
-                this->onChange(current);
-
+            if (this->onChange != nullptr) {
+                this->onChange(this->current);
+            }
             // Stop the timer
             if (this->shoudStopTimer()) {
                 this->timer.cancel(this->timerId);
