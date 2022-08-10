@@ -24,7 +24,7 @@ public:
         this->to = 0;
         this->current = 0;
         this->timerId = 0;
-        this->timeMs = 200;
+        this->timeMs = 150;
         this->onChange = nullptr;
         this->onComplete = nullptr;
         this->step = 0;
@@ -44,7 +44,7 @@ public:
         this->onChange = onChange;
         this->onComplete = onComplete;
 
-        int stepSize = abs(to - from) / (timeMs / delayMs);
+        int stepSize = abs(to - from) / (this->timeMs / this->delayMs);
         // If stepSize is 0, set it to 1 to prevent infinite loop in timer.
         stepSize = max(stepSize, 1);
         this->step = from > to ? -stepSize : stepSize;
@@ -57,9 +57,9 @@ public:
                 max(this->from, this->to)
             );
 
-            if (this->onChange != nullptr) {
+            if (this->onChange != nullptr)
                 this->onChange(this->current);
-            }
+
             // Stop the timer
             if (this->shoudStopTimer()) {
                 this->timer.cancel(this->timerId);

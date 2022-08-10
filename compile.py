@@ -2,7 +2,6 @@ import re
 import subprocess
 import sys
 import os
-from xmlrpc.client import Boolean
 
 BOARD = 'esp8266:esp8266:d1_mini_clone'
 
