@@ -40,7 +40,7 @@ private:
 
     unsigned long refreshRateHz;
     Settings& settings;
-    Animation& animation;
+    BrightnessAnimation& brightnessAnimation;
     bool isAnimating;
 
     void updateLedDisplayValues() {
@@ -62,13 +62,13 @@ public:
         uint8_t greenPin,
         uint8_t bluePin,
         Settings& settings,
-        Animation& animation
+        BrightnessAnimation& brightnessAnimation
     ) :
         red(redPin),
         green(greenPin),
         blue(bluePin),
         settings(settings),
-        animation(animation) {
+        brightnessAnimation(brightnessAnimation) {
         this->color = RGB_WHITE;
         this->displayBrightness = 70;
         this->targetBrightness = 70;
@@ -140,7 +140,7 @@ public:
             return;
         isOn = true;
         this->isAnimating = true;
-        this->animation.transition(this->displayBrightness, this->targetBrightness, [&](uint8 value) {
+        this->brightnessAnimation.transition(this->displayBrightness, this->targetBrightness, [&](uint8 value) {
             this->setDisplayBrightness(value);
             }, [&]() {
                 this->isAnimating = false;
@@ -152,7 +152,7 @@ public:
         if (isAnimating)
             return;
         this->isAnimating = true;
-        this->animation.transition(this->displayBrightness, 0, [&](uint8 value) {
+        this->brightnessAnimation.transition(this->displayBrightness, 0, [&](uint8 value) {
             this->setDisplayBrightness(value);
             }, [&]() {
                 this->isAnimating = false;
@@ -199,7 +199,7 @@ public:
 
     uint8 setBrightnessAnimated(uint8 brightness) {
         this->isAnimating = true;
-        this->animation.transition(this->displayBrightness, brightness, [&](uint8 value) {
+        this->brightnessAnimation.transition(this->displayBrightness, brightness, [&](uint8 value) {
             this->setDisplayBrightness(value);
             }, [&, brightness]() {
                 this->isAnimating = false;

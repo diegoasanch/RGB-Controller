@@ -5,7 +5,7 @@
 typedef std::function<void(int)> AnimationHandler;
 typedef std::function<void()> AnimationCompleteHandler;
 
-class Animation {
+class BrightnessAnimation {
 private:
     AsyncTimer& timer;
     uint8 from;
@@ -19,7 +19,7 @@ private:
     AnimationCompleteHandler onComplete;
 
 public:
-    Animation(AsyncTimer& timer) : timer(timer) {
+    BrightnessAnimation(AsyncTimer& timer) : timer(timer) {
         this->from = 0;
         this->to = 0;
         this->current = 0;
@@ -80,5 +80,4 @@ public:
         this->onChange = nullptr;
         this->onComplete = nullptr;
     }
-
 };

@@ -18,13 +18,13 @@ WiFiClient client;
 UpdateClient updateClient(client);
 
 AsyncTimer timer;
-Animation animation(timer);
+BrightnessAnimation brightnessAnimation(timer);
 RGBLed rgb(
     pins::RGB_RED,
     pins::RGB_GREEN,
     pins::RGB_BLUE,
     settings,
-    animation
+    brightnessAnimation
 );
 
 Weather weatherSensor(refreshRate::WEATHER, pins::WEATHER_DATA);
