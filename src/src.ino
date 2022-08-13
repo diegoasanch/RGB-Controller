@@ -4,7 +4,7 @@
 #include "env.h"
 #include "config.h"
 
-#include "Animation.hpp"
+#include "BrightnessAnimation.hpp"
 #include "Api.hpp"
 #include "RGBLed.hpp"
 #include "Update.hpp"

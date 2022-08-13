@@ -4,7 +4,7 @@
 #include "Led.hpp"
 #include "config.h"
 #include "Settings.hpp"
-#include "Animation.hpp"
+#include "BrightnessAnimation.hpp"
 
 
 const uint8 MAX_RGB_BRIGHTNESS = 100;
