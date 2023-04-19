@@ -15,6 +15,12 @@ struct RGB_Color {
     uint8_t blue;
 };
 
+struct HSL_Color {
+    uint16_t hue;
+    float saturation;
+    float lightness;
+};
+
 const RGB_Color RGB_WHITE = {
     MAX_LED_BRIGHTNESS,
     MAX_LED_BRIGHTNESS,
@@ -212,35 +218,35 @@ public:
         return this->displayBrightness;
     }
 
-    void setRGBColor(uint8 red, uint8 green, uint8 blue) {
-        color = RGB_Color{ red, green, blue };
+    void setRGBColor(RGB_Color color) {
+        this->color = color;
         this->updateLedDisplayValues();
-        this->settings.setRgbRed(red);
-        this->settings.setRgbGreen(green);
-        this->settings.setRgbBlue(blue);
+
+        this->settings.setRgbRed(color.red);
+        this->settings.setRgbGreen(color.green);
+        this->settings.setRgbBlue(color.blue);
     }
 
     /**
      * Sets current color
-     *
      * @param color In format `RRGGBB` (hex)
      */
-    void setHexColor(String color) {
-        Serial.printf("> SetHexColor %s\n", color.c_str());;
-        String red = color.substring(0, 2);
-        String green = color.substring(2, 4);
-        String blue = color.substring(4, 6);
-
-        this->setRGBColor(
-            (uint8)strtol(red.c_str(), NULL, 16),
-            (uint8)strtol(green.c_str(), NULL, 16),
-            (uint8)strtol(blue.c_str(), NULL, 16)
-        );
+    void setHexColor(String hex) {
+        Serial.printf("> SetHexColor %s\n", hex.c_str());
+        String red = hex.substring(0, 2);
+        String green = hex.substring(2, 4);
+        String blue = hex.substring(4, 6);
+        RGB_Color rgb = {
+            (uint8_t)strtol(red.c_str(), NULL, 16),
+            (uint8_t)strtol(green.c_str(), NULL, 16),
+            (uint8_t)strtol(blue.c_str(), NULL, 16)
+        };
+        this->setRGBColor(rgb);
     }
 
     /**
-         * Get current color in format `RRGGBB` (hex)
-         */
+     * Get current color in format `RRGGBB` (hex)
+     */
     String getHexColor() {
         String red = String(color.red, HEX);
         String green = String(color.green, HEX);
@@ -266,6 +272,35 @@ public:
 
     unsigned long getRefreshRateHz() {
         return this->refreshRateHz;
+    }
+
+    RGB_Color& hslToRgb(HSL_Color& hsl) {
+        uint16 h = hsl.hue;
+        float s = hsl.saturation;
+        float l = hsl.lightness;
+
+        float a = s * min(l, 1 - l);
+
+        auto f = [&](float n) {
+            float k = ((n + h) / 30) % 12;
+            //
+            // float k = ((n + h) / 30) ;
+            return uint8(l - a * max(min(min(k - 3, 9 - k), (float)1), (float)-1));
+        };
+
+        RGB_Color rgb;
+        rgb.red = f(0);
+        rgb.green = f(8);
+        rgb.blue = f(4);
+
+        return rgb;
+    }
+
+    void setHslColor(uint16 h, float s, float l) {
+        HSL_Color hsl = { h, s, l };
+
+
+        this->setRGBColor(r, g, b);
     }
 };
 
