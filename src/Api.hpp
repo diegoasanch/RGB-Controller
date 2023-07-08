@@ -7,6 +7,7 @@
 #include <ArduinoJson.h>
 
 #include "config.h"
+#include "env.h"
 
 #include "RGBLed.hpp"
 #include "Settings.hpp"
@@ -41,16 +42,14 @@ public:
         server.begin();
         Serial.println("Started server");
 
-        if (MDNS.begin("esp8266"))
-            Serial.println("Started MDNS");
-        else
-            Serial.println("Error starting MDNS");
+        this->configureMDNS();
     }
 
     void handleRequests() {
         server.handleClient();
         MDNS.update();
     }
+
 private:
     ESP8266WebServer server;
     int port;
@@ -58,6 +57,13 @@ private:
     Weather& weather;
     UpdateClient& updateClient;
     Settings& settings;
+
+    void configureMDNS() {
+        if (MDNS.begin(env::MDNS_SERVER_NAME))
+            Serial.println("Started MDNS at: " + String(env::MDNS_SERVER_NAME) + ".local");
+        else
+            Serial.println("Error starting MDNS");
+    }
 
     void configureRoutes() {
         server.on("/", [this]() {this->handleRoot();});
