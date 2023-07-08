@@ -1,0 +1,25 @@
+{
+    "version": 4,
+    "configurations": [
+        {
+            "name": "Arduino",
+            "compileCommands": "${workspaceFolder}/dist/compile_commands.json",
+            "intelliSenseMode": "gcc-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "compilerPath": "~/Library/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/bin/xtensa-lx106-elf-g++",
+            "includePath": [
+                "${workspaceFolder}/src",
+                "~/Documents/Arduino/libraries/**",
+                "~/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/**",
+                "~/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/**",
+                "~/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266",
+                "~/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/variants/d1_mini"
+            ],
+            "forcedInclude": [
+                "~/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/cores/esp8266/Arduino.h"
+            ]
+
+        }
+    ]
+}
