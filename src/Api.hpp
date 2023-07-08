@@ -87,7 +87,8 @@ private:
 
         // -- Settings
         // Update
-        server.on(UriBraces("/settings/version/update/{}"), [this]() {this->handleUpdateVersion();});
+        // Path args: updateServerURL, port, updatePath
+        server.on(UriBraces("/settings/version/update/{}/{}/{}"), [this]() {this->handleUpdateVersion();});
         server.on("/settings/version", [this]() {this->getVersion();});
         server.on("/settings/reboot", [this]() {this->handleReboot();});
 
@@ -183,9 +184,11 @@ private:
     // -------- Settings --------
 
     void handleUpdateVersion() {
-        String version = server.pathArg(0);
+        String updateServerUrl = server.pathArg(0);
+        String port = server.pathArg(1);
+        String updatePath = server.pathArg(2);
         server.send(200, "text/plain", "starting update");
-        this->updateClient.install(version);
+        this->updateClient.install(updateServerUrl, port.toInt(), updatePath);
     }
 
     void getVersion() {
