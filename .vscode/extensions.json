@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "vsciot-vscode.vscode-arduino",
+        "jeff-hykin.better-cpp-syntax",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-python.vscode-pylance",
+        "ms-python.python"
+    ]
+}
