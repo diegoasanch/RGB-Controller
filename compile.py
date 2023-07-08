@@ -6,8 +6,8 @@ import os
 BOARD = 'esp8266:esp8266:d1_mini_clone'
 
 CWD = os.getcwd()
-BUILD_DIR = os.path.join(CWD, 'dist')
-OUT_DIR = os.path.join(CWD, 'dist','bin')
+BUILD_DIR = os.path.join(CWD, 'build')
+OUT_DIR = os.path.join(BUILD_DIR, 'bin')
 SKETCH_PATH = os.path.join(CWD, 'src','src.ino')
 BIN_FILE = 'src.ino.bin'
 
