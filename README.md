@@ -64,10 +64,10 @@ There are two ways to upload the binary to the microcontroller:
 
 Run
 
-TODO: add correct command
+TODO: add explanation for the command
 
 ```bash
-ardino-cli upload -i <version_number>.bin -p <port>
+arduino-cli upload -i ./build/bin/v1.1.4.bin -b esp8266:esp8266:d1_mini_clone -p /dev/cu.usbserial-130
 ```
 
 #### OTA update
