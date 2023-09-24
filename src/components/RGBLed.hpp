@@ -2,9 +2,9 @@
 
 #include <AsyncTimer.h>
 #include "Led.hpp"
-#include "config.h"
-#include "Settings.hpp"
-#include "Animation.hpp"
+#include "../config.h"
+#include "../domain/Settings.hpp"
+#include "../domain/Animation.hpp"
 
 
 const uint8 MAX_RGB_BRIGHTNESS = 100;

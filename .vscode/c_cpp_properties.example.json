@@ -9,7 +9,7 @@
             "cppStandard": "c++17",
             "compilerPath": "~/Library/Arduino15/packages/esp8266/tools/xtensa-lx106-elf-gcc/3.1.0-gcc10.3-e5f9fec/bin/xtensa-lx106-elf-g++",
             "includePath": [
-                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/**",
                 "~/Documents/Arduino/libraries/**",
                 "~/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/libraries/**",
                 "~/Library/Arduino15/packages/esp8266/hardware/esp8266/3.1.2/tools/**",

@@ -7,12 +7,12 @@
 #include <ArduinoJson.h>
 
 #include "config.h"
-#include "env.h"
+#include "../env.h"
 
-#include "RGBLed.hpp"
-#include "Settings.hpp"
-#include "Update.hpp"
-#include "Weather.hpp"
+#include "../components/RGBLed.hpp"
+#include "./Settings.hpp"
+#include "./Update.hpp"
+#include "./Weather.hpp"
 
 class Api {
 public:

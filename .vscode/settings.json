@@ -14,5 +14,9 @@
     "initializer_list": "cpp",
     "ranges": "cpp"
   },
-  "sonarlint.pathToCompileCommands": "${workspaceFolder}/dist/compile_commands.json"
+  "sonarlint.pathToCompileCommands": "${workspaceFolder}/dist/compile_commands.json",
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+  },
+  "python.formatting.provider": "none"
 }

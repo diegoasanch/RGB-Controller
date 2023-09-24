@@ -4,13 +4,14 @@
 #include "env.h"
 #include "config.h"
 
-#include "Animation.hpp"
-#include "Api.hpp"
-#include "RGBLed.hpp"
-#include "Update.hpp"
-#include "Weather.hpp"
-#include "WiFi.hpp"
-#include "Settings.hpp"
+#include "./components/RGBLed.hpp"
+
+#include "./domain/Animation.hpp"
+#include "./domain/Api.hpp"
+#include "./domain/Update.hpp"
+#include "./domain/Weather.hpp"
+#include "./domain/WiFi.hpp"
+#include "./domain/Settings.hpp"
 
 Settings settings;
 

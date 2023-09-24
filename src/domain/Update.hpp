@@ -5,7 +5,8 @@
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 
-#include "env.h"
+#include "../env.h"
+#include "../config.h"
 
 class UpdateClient {
 private:

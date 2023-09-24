@@ -5,24 +5,12 @@ from packaging import version
 
 app = Flask(__name__, static_folder='../build/bin')
 
-def get_latest_version(directory):
-    'Get the latest version from the build directory'
-    semver_files = [
-        f for f in os.listdir(directory)
-        # Match files using semver naming
-        if re.fullmatch(r'v\d+\.\d+\.\d+\.bin', f)
-    ]
-    versions = [version.parse(f[1:-4]) for f in semver_files]
-
-    if versions:
-        latest_version = max(versions)
-        return f"v{latest_version}"
-    else:
-        return None
 
 @app.route('/latest_version', methods=['GET'])
-def latest_version():
-    'Get the latest version from the build directory'
+def latest_version() -> str:
+    '''
+    Get the latest version from the build directory
+    '''
     latest_version = get_latest_version(app.static_folder)
     if latest_version:
         return latest_version
@@ -41,6 +29,26 @@ def update_version():
             abort(404, "File not found.")
     else:
         abort(400, "Bad request. Please provide a version parameter.")
+
+
+def get_latest_version(directory: str) -> (str | None):
+    '''
+    Latest version from the build directory
+    version is determined with semver
+    '''
+    semver_files = [
+        f for f in os.listdir(directory)
+        # Match files using semver naming
+        if re.fullmatch(r'v\d+\.\d+\.\d+\.bin', f)
+    ]
+    versions = [version.parse(f[1:-4]) for f in semver_files]
+
+    if versions:
+        latest_version = max(versions)
+        return f"v{latest_version}"
+    else:
+        return None
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=3301)
