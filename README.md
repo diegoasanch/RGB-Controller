@@ -2,21 +2,14 @@
 
 RGB LED strip controller + mini Weather station, built using the Arduino platform.
 
-## Hardware
+## File Structure
 
-### Components
-
-- WeMos D1 mini (micro controller)
-- DHT22 (temperature & humidity sensor)
-- LM2596S Step-down voltage regulator
-- IRLZ44N (N-channel, logic-level MOSFET Transistor) x 3
-- 10kΩ Resistor x 4
-- 5.5X2.1mm DC Power jack
-- SMD 5050 RGB Strip
-
-### Circuit diagram
-
-![Circuit](./Diagrams/Diagram_bb.png)
+- `src/`
+  - `src.ino` : Entry point 
+  - `config.h`:  Pin mappings, refresh rates, device version
+  - `env.h`:  WiFi config
+  - `components/`: Hardware components
+  - `domain/`: System logic
 
 ## Project setup
 
@@ -87,3 +80,19 @@ arduino-cli upload -i ./build/bin/<latest_version>.bin -b esp8266:esp8266:d1_min
     ```plain
     <controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update
     ```
+
+## Hardware
+
+### Components
+
+- WeMos D1 mini (micro controller)
+- DHT22 (temperature & humidity sensor)
+- LM2596S Step-down voltage regulator
+- IRLZ44N (N-channel, logic-level MOSFET Transistor) x 3
+- 10kΩ Resistor x 4
+- 5.5X2.1mm DC Power jack
+- SMD 5050 RGB Strip
+
+### Circuit diagram
+
+![Circuit](./Diagrams/Diagram_bb.png)
