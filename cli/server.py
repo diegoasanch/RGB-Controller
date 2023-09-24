@@ -1,6 +1,8 @@
-from flask import Flask, send_from_directory, request, abort
 import os
 import re
+
+from constants import version_regex
+from flask import Flask, send_from_directory, request, abort
 from packaging import version
 
 app = Flask(__name__, static_folder='../build/bin')
@@ -33,19 +35,15 @@ def update_version():
 
 def get_latest_version(directory: str) -> (str | None):
     '''
-    Latest version from the build directory
-    version is determined with semver
+    Latest version string from the build directory
     '''
-    semver_files = [
-        f for f in os.listdir(directory)
-        # Match files using semver naming
-        if re.fullmatch(r'v\d+\.\d+\.\d+\.bin', f)
+    versions = [
+        f.rstrip('.bin') for f in os.listdir(directory)
     ]
-    versions = [version.parse(f[1:-4]) for f in semver_files]
 
-    if versions:
+    if len(versions):
         latest_version = max(versions)
-        return f"v{latest_version}"
+        return latest_version
     else:
         return None
 

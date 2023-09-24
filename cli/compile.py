@@ -3,15 +3,16 @@ import subprocess
 import sys
 import os
 
+from constants import version_regex
+
 BOARD = 'esp8266:esp8266:d1_mini_clone'
 
 CWD = os.getcwd()
 BUILD_DIR = os.path.join(CWD, 'build')
 OUT_DIR = os.path.join(BUILD_DIR, 'bin')
-SKETCH_PATH = os.path.join(CWD, 'src','src.ino')
+SKETCH_PATH = os.path.join(CWD, 'src', 'src.ino')
 BIN_FILE = 'src.ino.bin'
 
-version_regex = re.compile(r'^v\d+\.\d+\.\d+(-rc(\d+)?)?$')
 
 def compile_sketch(board: str, build_dir: str, sketch_path: str):
     COMPILE_CMD = f'arduino-cli compile -b {board} -e --output-dir {build_dir} {sketch_path}'
@@ -23,6 +24,7 @@ def compile_sketch(board: str, build_dir: str, sketch_path: str):
         print(output.decode("utf-8"))
         return proc.returncode
 
+
 def rename_build(new_name: str):
     if not os.path.exists(OUT_DIR):
         os.makedirs(OUT_DIR)
@@ -31,11 +33,14 @@ def rename_build(new_name: str):
         os.path.join(OUT_DIR, new_name+'.bin')
     )
 
+
 def is_version_valid(name: str) -> bool:
     return bool(re.match(version_regex, name))
 
+
 def version_exists(name: str) -> bool:
     return os.path.exists(os.path.join(OUT_DIR, name + '.bin'))
+
 
 def yes_or_no(question: str) -> bool:
     while True:
@@ -46,6 +51,7 @@ def yes_or_no(question: str) -> bool:
             return False
         else:
             print('Invalid answer')
+
 
 def write_config_version(version: str):
     'Writes version to config.h'
@@ -64,11 +70,13 @@ def write_config_version(version: str):
         f.truncate()
         f.write(''.join(lines), )
 
+
 def find_version_line(lines: list[str]) -> int:
     for i, line in enumerate(lines):
         if line.strip().startswith('const String VERSION'):
             return i
     return -1
+
 
 def main():
     cli_args = sys.argv[1:]
@@ -94,12 +102,14 @@ def main():
     status_code = compile_sketch(BOARD, BUILD_DIR, SKETCH_PATH)
 
     if bool(status_code):
-        print(f'Compilation failed with status code: {status_code}\nexiting...')
+        print(
+            f'Compilation failed with status code: {status_code}\nexiting...')
         sys.exit(status_code)
 
     if will_rename:
         print(f'Renaming build to {version}')
         rename_build(version)
+
 
 if __name__ == '__main__':
     main()

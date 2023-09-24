@@ -6,7 +6,7 @@ RGB LED strip controller + mini Weather station, built using the Arduino platfor
 
 ### Components
 
-- WeMos D1 mini (microcontroller)
+- WeMos D1 mini (micro controller)
 - DHT22 (temperature & humidity sensor)
 - LM2596S Step-down voltage regulator
 - IRLZ44N (N-channel, logic-level MOSFET Transistor) x 3
@@ -51,11 +51,11 @@ python3 compile.py <version_number>
 ```
 
 The script will create a `build/bin` directory and place the binary in it.
-The binary will be named `<version_number.bin` and can be uploaded to the microcontroller using the `arduino-cli` tool.
+The binary will be named `<version_number.bin` and can be uploaded to the micro controller using the `arduino-cli` tool.
 
 ### Uploading the binary
 
-There are two ways to upload the binary to the microcontroller:
+There are two ways to upload the binary to the micro controller:
 
 1. Using the `arduino-cli` tool: required for first time upload.
 2. Via Over The Air (OTA) update: can be used for subsequent updates, requires the board to already have the sketch on board and connected to your local network.
@@ -64,12 +64,19 @@ There are two ways to upload the binary to the microcontroller:
 
 Run
 
-TODO: add explanation for the command
+1. Build the project using the `compile.py` script.
+2. Run the following command to upload the binary to the micro controller
 
+TODO: Add explanation for the cli arguments
 ```bash
-arduino-cli upload -i ./build/bin/v1.1.4.bin -b esp8266:esp8266:d1_mini_clone -p /dev/cu.usbserial-130
+arduino-cli upload -i ./build/bin/<latest_version>.bin -b esp8266:esp8266:d1_mini_clone -p /dev/cu.usbserial-130
 ```
 
 #### OTA update
 
-TODO: Add docs for OTA update
+- 1. Build the project using the `compile.py` script.
+- 2. Send a `POST` request to the `settings/version/update/` endpoint of the micro controller
+
+```plain
+<controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update
+```

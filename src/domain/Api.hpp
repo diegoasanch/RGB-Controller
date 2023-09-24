@@ -103,7 +103,7 @@ private:
     }
 
     void handleRoot() {
-        server.send(200, "text/plain", "Hello friend.");
+        server.send(200, "text/plain", "Hello world.");
     }
 
     // -------- Light --------
