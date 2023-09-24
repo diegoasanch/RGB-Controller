@@ -47,7 +47,7 @@ built with just the `arduino-cli` and `python 3`.
 2. Run the `compile.py` script. 
 
 ```bash
-python3 compile.py <version_number>
+python3 cli/compile.py <version_number>
 ```
 
 The script will create a `build/bin` directory and place the binary in it.
@@ -68,6 +68,7 @@ Run
 2. Run the following command to upload the binary to the micro controller
 
 TODO: Add explanation for the cli arguments
+
 ```bash
 arduino-cli upload -i ./build/bin/<latest_version>.bin -b esp8266:esp8266:d1_mini_clone -p /dev/cu.usbserial-130
 ```
@@ -75,8 +76,14 @@ arduino-cli upload -i ./build/bin/<latest_version>.bin -b esp8266:esp8266:d1_min
 #### OTA update
 
 - 1. Build the project using the `compile.py` script.
-- 2. Send a `POST` request to the `settings/version/update/` endpoint of the micro controller
+- 2. Start the update server (skip if already running)
 
-```plain
-<controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update
-```
+    ```bash
+    python3 cli/server.py
+    ```
+
+- 3. Send a `POST` request to the `settings/version/update/` endpoint of the micro controller
+
+    ```plain
+    <controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update
+    ```
