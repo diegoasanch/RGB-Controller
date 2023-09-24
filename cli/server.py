@@ -3,7 +3,6 @@ import re
 
 from constants import version_regex
 from flask import Flask, send_from_directory, request, abort
-from packaging import version
 
 app = Flask(__name__, static_folder='../build/bin')
 
