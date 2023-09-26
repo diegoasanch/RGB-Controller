@@ -37,7 +37,7 @@ void setup() {
     digitalWrite(LED_BUILTIN, LOW);
 
     rgb.startFromStorage();
-    rgb.run();
+    // rgb.run();
 
     // TODO: activate Serial with env
     Serial.begin(115200);
