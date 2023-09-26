@@ -92,7 +92,16 @@ public:
         uint8_t b = this->settings.getRgbBlue();
         this->color = { r, g, b };
 
+        if (this->shouldTurnOn())
+            this->turnOnAnimated();
+        else
+            this->turnOffAnimated();
+
         this->updateLedDisplayValues();
+    }
+
+    bool shouldTurnOn() {
+        return !isOn && this->targetBrightness != 0;
     }
 
     void run() {
