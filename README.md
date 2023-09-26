@@ -12,6 +12,28 @@ RGB LED strip controller + mini Weather station, built using the Arduino platfor
   - `components/`: Hardware components
   - `domain/`: System logic
 
+## Use the device
+
+### Toggle light
+
+```bash
+curl -X POST '<controller_ip>/light/toggleAnimated'
+```
+
+### Set light color
+
+```bash 
+curl -X POST '<controller_ip>/light/hexColor/<hex_color>'
+```
+
+### Set light brightness
+
+```bash
+curl -X POST '<controller_ip>/light/brightnessAnimated/<brightness>'
+```
+
+
+
 ## Project setup
 
 The project is configured to be used with the VSCode editor for editing comfort, but can definitely be 
@@ -83,27 +105,6 @@ arduino-cli upload -i ./build/bin/<latest_version>.bin -b esp8266:esp8266:d1_min
     ```bash
     curl -X POST '<controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update'
     ```
-
-## Test the device
-
-### Toggle light
-
-```bash
-curl -X POST '<controller_ip>/light/toggleAnimated'
-```
-
-### Set light color
-
-```bash 
-curl -X POST '<controller_ip>/light/hexColor/<hex_color>'
-```
-
-### Set light brightness
-
-```bash
-curl -X POST '<controller_ip>/light/brightnessAnimated/<brightness>'
-```
-
 
 ## Hardware
 
