@@ -4,6 +4,7 @@ RGB LED strip controller + mini Weather station, built using the Arduino platfor
 
 ## File Structure
 
+- `cli/`: Python scripts for building and uploading the project
 - `src/`
   - `src.ino` : Entry point 
   - `config.h`:  Pin mappings, refresh rates, device version
@@ -50,10 +51,12 @@ The binary will be named `<version_number.bin` and can be uploaded to the micro 
 
 There are two ways to upload the binary to the micro controller:
 
-1. Using the `arduino-cli` tool: required for first time upload.
-2. Via Over The Air (OTA) update: can be used for subsequent updates, requires the board to already have the sketch on board and connected to your local network.
+1. `arduino-cli` tool: required for first time upload.
+2. OTA update (Over The Air): can be used for subsequent updates.
 
-#### Using `arduino-cli`
+    Requires the board to already have the sketch on running and connected to your local network.
+
+#### 1. `arduino-cli`
 
 Run
 
@@ -66,7 +69,7 @@ TODO: Add explanation for the cli arguments
 arduino-cli upload -i ./build/bin/<latest_version>.bin -b esp8266:esp8266:d1_mini_clone -p /dev/cu.usbserial-130
 ```
 
-#### OTA update
+#### 2. OTA update (Over The Air)
 
 - 1. Build the project using the `compile.py` script.
 - 2. Start the update server (skip if already running)
@@ -77,9 +80,30 @@ arduino-cli upload -i ./build/bin/<latest_version>.bin -b esp8266:esp8266:d1_min
 
 - 3. Send a `POST` request to the `settings/version/update/` endpoint of the micro controller
 
-    ```plain
-    <controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update
+    ```bash
+    curl -X POST '<controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update'
     ```
+
+## Test the device
+
+### Toggle light
+
+```bash
+curl -X POST '<controller_ip>/light/toggleAnimated'
+```
+
+### Set light color
+
+```bash 
+curl -X POST '<controller_ip>/light/hexColor/<hex_color>'
+```
+
+### Set light brightness
+
+```bash
+curl -X POST '<controller_ip>/light/brightnessAnimated/<brightness>'
+```
+
 
 ## Hardware
 
