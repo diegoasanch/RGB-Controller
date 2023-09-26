@@ -96,7 +96,7 @@ def main():
             print(f'Version {version} already exists')
             print('Do you want to overwrite it?')
             if not yes_or_no(f'Overwrite {version}?'):
-                sys.exit(0)
+                sys.exit(1)
 
     write_config_version(version)
     status_code = compile_sketch(BOARD, BUILD_DIR, SKETCH_PATH)
@@ -109,6 +109,10 @@ def main():
     if will_rename:
         print(f'Renaming build to {version}')
         rename_build(version)
+
+    # TODO: make a post request to the server to update the latest version
+    # from the README:
+    #   curl -X POST '<controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update'
 
 
 if __name__ == '__main__':
