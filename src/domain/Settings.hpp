@@ -56,7 +56,11 @@ public:
         EEPROM.commit();
     }
 
+    /*
+    * Reboot the device
+    */
     void reboot() {
+        Serial.println("Rebooting device");
         EEPROM.end();
         ESP.restart();
     }

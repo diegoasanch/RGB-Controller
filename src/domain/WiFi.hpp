@@ -7,20 +7,21 @@
 
 
 //Static IP address configuration
-IPAddress staticIP(192, 168, 0, 127); //ESP static ip
-IPAddress gateway(192, 168, 0, 1);   //IP Address of your WiFi Router (Gateway)
-IPAddress subnet(255, 255, 255, 0);  //Subnet mask
-IPAddress dns(8, 8, 8, 8);  //DNS
-
+// TODO: read from config.h
 const char* deviceName = "deviceName.com";
 String ipAddr = "";
+IPAddress staticIP(192, 168, 0, 127); // ESP static ip
+IPAddress gateway(192, 168, 0, 1);    // Gateway (IP Address of your WiFi Router)
+IPAddress subnet(255, 255, 255, 0);   // Subnet mask
+IPAddress dns(8, 8, 8, 8);            // DNS
 
-
+// TODO: make async to not block the main thread, allowing light to restart if wifi is down
 void setupWifi() {
 
     int attempt = 1;
     Serial.println("Configuring to WiFi");
-    WiFi.hostname(deviceName);      // DHCP Hostname (useful for finding device for static lease)
+    // DHCP Hostname (useful for finding device for static lease)
+    WiFi.hostname(deviceName);
     if (!WiFi.config(staticIP, subnet, gateway)) {
         Serial.println("Failed to configure WiFi with DHCP");
         delay(1000);
