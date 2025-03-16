@@ -8,10 +8,10 @@
 
 //Static IP address configuration
 // TODO: read from config.h
-const char* deviceName = "deviceName.com";
+const char* deviceName = env::MDNS_SERVER_NAME;
 String ipAddr = "";
-IPAddress staticIP(192, 168, 0, 127); // ESP static ip
-IPAddress gateway(192, 168, 0, 1);    // Gateway (IP Address of your WiFi Router)
+IPAddress staticIP(192, 168, 68, 127); // ESP static ip
+IPAddress gateway(192, 168, 68, 1);    // Gateway (IP Address of your WiFi Router)
 IPAddress subnet(255, 255, 255, 0);   // Subnet mask
 IPAddress dns(8, 8, 8, 8);            // DNS
 
@@ -44,5 +44,6 @@ void setupWifi() {
     }
     Serial.println("\nWiFi connected");
     ipAddr = WiFi.localIP().toString();
+    Serial.println("IP Address: " + ipAddr);
     delay(1000);
 }

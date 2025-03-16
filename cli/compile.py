@@ -18,11 +18,14 @@ def compile_sketch(board: str, build_dir: str, sketch_path: str):
     COMPILE_CMD = f'arduino-cli compile -b {board} -e --output-dir {build_dir} {sketch_path}'
 
     print('Compiling...')
-    with subprocess.Popen(COMPILE_CMD, stdout=subprocess.PIPE, shell=True) as proc:
-        output = proc.stdout.read()
-        print('> Compilation done, result:\n')
-        print(output.decode("utf-8"))
-        return proc.returncode
+    result = subprocess.run(COMPILE_CMD, shell=True, text=True,
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    print(result.stdout)
+    if result.stderr:
+        print("Errors:", result.stderr)
+
+    return result.returncode
 
 
 def rename_build(new_name: str):
