@@ -92,6 +92,9 @@ public:
         uint8_t b = this->settings.getRgbBlue();
         this->color = { r, g, b };
 
+        this->refreshRateHz = this->settings.getRefreshRate();
+        analogWriteFreq(this->refreshRateHz);
+
         this->updateLedDisplayValues();
     }
 
@@ -145,7 +148,7 @@ public:
             }, [&]() {
                 this->isAnimating = false;
                 this->turnOn();
-            });
+                });
     }
 
     void turnOffAnimated() {
@@ -157,7 +160,7 @@ public:
             }, [&]() {
                 this->isAnimating = false;
                 this->turnOff();
-            });
+                });
     }
 
     bool toggleAnimated() {
@@ -204,8 +207,8 @@ public:
             }, [&, brightness]() {
                 this->isAnimating = false;
                 this->setTargetBrightness(brightness);
-            });
-        return this->targetBrightness;
+                });
+            return this->targetBrightness;
     }
 
     uint8 getBrightness() {
@@ -261,7 +264,8 @@ public:
 
     void setRefreshRateHz(unsigned long refreshRateHz) {
         this->refreshRateHz = constrain(refreshRateHz, 0, 40000);
-        analogWriteFreq(refreshRate::LED);
+        analogWriteFreq(this->refreshRateHz);
+        this->settings.setRefreshRate(this->refreshRateHz);
     }
 
     unsigned long getRefreshRateHz() {

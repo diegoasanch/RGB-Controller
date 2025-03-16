@@ -8,6 +8,7 @@ namespace addresses {
     unsigned int rgbRed = 2;
     unsigned int rgbGreen = 3;
     unsigned int rgbBlue = 4;
+    unsigned int refreshRate = 5;
 }
 
 class Settings {
@@ -53,6 +54,15 @@ public:
     }
     void setRgbBlue(uint8_t blue) {
         EEPROM.write(addresses::rgbBlue, blue);
+        EEPROM.commit();
+    }
+
+    unsigned long getRefreshRate() {
+        return EEPROM.read(addresses::refreshRate);
+    }
+
+    void setRefreshRate(unsigned long rate) {
+        EEPROM.write(addresses::refreshRate, rate);
         EEPROM.commit();
     }
 
