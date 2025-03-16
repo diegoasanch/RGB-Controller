@@ -60,51 +60,74 @@ built with just the `arduino-cli` and `python 3`.
 
 1. Install the `arduino-cli` tool from [here](https://arduino.github.io/arduino-cli/latest/installation/)
 
-2. Run the `compile.py` script. 
+2. Install the Python dependencies:
+```bash
+pip install -r cli/requirements.txt
+```
 
+3. Run the `compile.py` script to build the project:
 ```bash
 python3 cli/compile.py <version_number>
 ```
 
 The script will create a `build/bin` directory and place the binary in it.
-The binary will be named `<version_number.bin` and can be uploaded to the micro controller using the `arduino-cli` tool.
+The binary will be named `<version_number.bin>`.
 
 ### Uploading the binary
 
 There are two ways to upload the binary to the micro controller:
 
-1. `arduino-cli` tool: required for first time upload.
-2. OTA update (Over The Air): can be used for subsequent updates.
+1. USB upload: Required for first-time upload or when the board is not connected to WiFi
+2. OTA update (Over The Air): Can be used for subsequent updates when the board is connected to your local network
 
-    Requires the board to already have the sketch on running and connected to your local network.
-
-#### 1. `arduino-cli`
-
-Run
-
-1. Build the project using the `compile.py` script.
-2. Run the following command to upload the binary to the micro controller
-
-TODO: Add explanation for the cli arguments
+The `run.py` script handles both methods and includes compilation, uploading, and monitoring in a single command:
 
 ```bash
-arduino-cli upload -i ./build/bin/<latest_version>.bin -b esp8266:esp8266:d1_mini_clone -p /dev/cu.usbserial-130
+# USB upload (will also open serial monitor after upload)
+python3 cli/run.py <version_number>
+
+# OTA update
+python3 cli/run.py <version_number> --ota <controller_ip>
+
+# OTA update with custom timeout (default is 60 seconds)
+python3 cli/run.py <version_number> --ota <controller_ip> --timeout 90
 ```
 
-#### 2. OTA update (Over The Air)
+Examples:
+```bash
+# Upload v1.3.2 via USB
+python3 cli/run.py v1.3.2
 
-- 1. Build the project using the `compile.py` script.
-- 2. Start the update server (skip if already running)
+# Update to v1.3.2 over WiFi (controller at 192.168.1.100)
+python3 cli/run.py v1.3.2 --ota 192.168.1.100
+```
 
-    ```bash
-    python3 cli/server.py
-    ```
+The script will:
+1. Compile the code for your board
+2. Upload it using the selected method (USB or OTA)
+3. For USB uploads: Open the serial monitor automatically
+4. For OTA updates: Wait for the update to complete and verify the board is back online
 
-- 3. Send a `POST` request to the `settings/version/update/` endpoint of the micro controller
+#### Manual Upload Methods
 
-    ```bash
-    curl -X POST '<controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update'
-    ```
+If you prefer to upload manually, you can use these commands:
+
+##### 1. USB Upload
+```bash
+arduino-cli upload -i ./build/bin/<version_number>.bin -b esp8266:esp8266:d1_mini_clone -p /dev/cu.usbserial-120
+```
+
+##### 2. OTA Update
+
+1. Start the update server:
+```bash
+python3 cli/server.py
+```
+
+2. Trigger the update on the controller:
+```bash
+curl -X POST '<controller_ip>/settings/version/update/<update_server_ip>/<update_server_port>/update'
+```
 
 ## Hardware
 
