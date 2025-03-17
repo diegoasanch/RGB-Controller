@@ -15,7 +15,7 @@ class Settings {
 
 public:
     Settings() {
-        EEPROM.begin(10);
+        EEPROM.begin(12);
     }
     bool getRgbOn() {
         return bool(EEPROM.read(addresses::rgbOn));
@@ -57,12 +57,14 @@ public:
         EEPROM.commit();
     }
 
-    unsigned long getRefreshRate() {
-        return EEPROM.read(addresses::refreshRate);
+    uint32_t getRefreshRate() {
+        uint32_t rate;
+        EEPROM.get(addresses::refreshRate, rate);
+        return rate;
     }
 
-    void setRefreshRate(unsigned long rate) {
-        EEPROM.write(addresses::refreshRate, rate);
+    void setRefreshRate(uint32_t rate) {
+        EEPROM.put(addresses::refreshRate, rate);
         EEPROM.commit();
     }
 

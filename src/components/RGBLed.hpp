@@ -38,7 +38,7 @@ private:
     uint8 displayBrightness;
     uint8 targetBrightness;
 
-    unsigned long refreshRateHz;
+    uint32_t refreshRateHz;
     Settings& settings;
     BrightnessAnimation& brightnessAnimation;
     bool isAnimating;
